@@ -402,7 +402,7 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   if(ncol(object) <= 2000){
     t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
   }else{
-    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],nrow(n_dim))
+    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],NULL)
     
     eigs <- t$sdev^2
     SD = sqrt(eigs)
