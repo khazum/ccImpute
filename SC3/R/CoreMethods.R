@@ -399,46 +399,40 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   # stop local cluster
   # parallel::stopCluster(cl)
   t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
-  # eigs <- t$sdev^2
-  # SD = sqrt(eigs)
-  # prop = eigs/sum(eigs)
-  # cum = cumsum(eigs)/sum(eigs)
-  # print(c(prop[min(n_dim)], prop[max(n_dim)]))
-  # 
-  # print(c(cum[min(n_dim)], cum[max(n_dim)]))
-  
-  # upper_bound = max(n_dim)
-  # lower_bound = 0
-  
-  # for (i in 1:length(t$sdev)) {
-  #   if(prop[i] <= .002){
-  #     lower_bound <- i
-  #     break
-  #   }
-  # }
-  # for (i in 1:length(t$sdev)) {
-  #   if(prop[i] <= .0008){
-  #     upper_bound <- i
-  #     break
-  #   }
-  # }
-  
-  # increment <- floor((upper_bound-lower_bound)/15)
-  # 
-  # # define number of cells and region of dimensions
-  # n_dim <-lower_bound:upper_bound
-  # # for large datasets restrict the region of dimensions to 15
-  # if (length(n_dim) > 15) {
-  #   increment <- floor((upper_bound-lower_bound)/15)
-  #   n_dim <- seq(lower_bound, upper_bound, increment)
-  # }
-  # metadata(object)$sc3$n_dim <- n_dim
-  
+  if (ncol(object) > 1000){
+    eigs <- t$sdev^2
+    SD = sqrt(eigs)
+    prop = eigs/sum(eigs)
+    cum = cumsum(eigs)/sum(eigs)
+
+    upper_bound = max(n_dim)
+    lower_bound = 0
+
+    for (i in 1:length(t$sdev)) {
+      if(prop[i] <= .002){
+        lower_bound <- i
+        break
+      }
+    }
+    for (i in 1:length(t$sdev)) {
+      if(prop[i] <= .0008){
+        upper_bound <- i
+        break
+      }
+    }
+
+    increment <- floor((upper_bound-lower_bound)/15)
+
+    # define number of cells and region of dimensions
+    n_dim <-lower_bound:upper_bound
+    # for large datasets restrict the region of dimensions to 15
+    if (length(n_dim) > 15) {
+      increment <- floor((upper_bound-lower_bound)/15)
+      n_dim <- seq(lower_bound, upper_bound, increment)
+    }
+    metadata(object)$sc3$n_dim <- n_dim
+  }
   transfs <- list(t$rotation)
-  
-  
-  
-  
   
   names(transfs) <- paste(hash.table[, 1], hash.table[, 2], sep = "_")
   

@@ -80,7 +80,7 @@ ccImpute <- function(clust_alg, X, X_log, labels, num_clusters) {
   return(t(x_imp))
 }
 
-impute <- function(method, X, X_log, labels, num_clusters) {
+impute <- function(method, X, X_log, labels, num_clusters, dataset) {
   start_time <- Sys.time()
   X_imp <- NULL
   
@@ -93,46 +93,46 @@ impute <- function(method, X, X_log, labels, num_clusters) {
   }else if(method == "magic"){
     X_imp <- t(as.matrix(magic(t(X_log), genes="all_genes")))
   }else if(method == "scimpute"){
-    write.csv(x=X, "~/ccImpute/datasets/temp_sci.csv")
+    write.csv(x=X, paste("~/ccImpute/datasets/temp_sci_", dataset, ".csv", sep=""))
     
     scimpute(# full path to raw count matrix
-      count_path = "~/ccImpute/datasets/temp_sci.csv",
+      count_path = paste("~/ccImpute/datasets/temp_sci_", dataset, ".csv", sep=""),
       infile = "csv",           # format of input file
       outfile = "csv",          # format of output file
-      out_dir = "~/ccImpute/datasets/temp_sci/",           # full path to output directory
+      out_dir = paste("~/ccImpute/datasets/temp_sci_", dataset, "/", sep=""), # full path to output directory
       labeled = FALSE,          # cell type labels not available
       drop_thre = 0.5,          # threshold set on dropout probability
-      Kcluster = num_clusters,             # 2 cell subpopulations
+      Kcluster = num_clusters,  # 2 cell subpopulations
       ncores = 15)              # number of cores used in parallel co
     end_time <- Sys.time()
     
-    X2 = read.csv("~/ccImpute/datasets/temp_sci/scimpute_count.csv",row.names = 1, header=TRUE)
+    X2 = read.csv(paste("~/ccImpute/datasets/temp_sci_", dataset, "/scimpute_count.csv", sep=""),row.names = 1, header=TRUE)
     
     librarySizes <- colSums(X2)
     X_norm <- t(t(X2)/librarySizes)*1000000
     
     X_imp <- log2(X_norm + 1)
     
-    unlink("~/ccImpute/datasets/temp_sci/", recursive = TRUE)
-    unlink("~/ccImpute/datasets/temp_sci.csv")
+    unlink(paste("~/ccImpute/datasets/temp_sci_", dataset, "/", sep=""), recursive = TRUE)
+    unlink(paste("~/ccImpute/datasets/temp_sci_", dataset, ".csv", sep=""))
   }else if(method == "dca"){
-    write.csv(x=X, "~/ccImpute/datasets/temp_dca.csv")
-    system(" dca ~/ccImpute/datasets/temp_dca.csv ~/ccImpute/datasets/temp_dca/ --threads 15")
-    X2 <- read.csv("~/ccImpute/datasets/temp_dca/mean.tsv", sep="\t", row.names = 1, header=TRUE)
+    write.csv(x=X, paste("~/ccImpute/datasets/temp_dca_", dataset, ".csv", sep=""))
+    system(paste("dca ~/ccImpute/datasets/temp_dca_", dataset, ".csv", " ~/ccImpute/datasets/temp_dca_", dataset, "/", " --threads 15", sep=""))
+    X2 <- read.csv(paste("~/ccImpute/datasets/temp_dca_", dataset, "/mean.tsv", sep=""), sep="\t", row.names = 1, header=TRUE)
     librarySizes <- colSums(X2)
     X_norm <- t(t(X2)/librarySizes)*1000000
     X_imp <- log2(X_norm + 1)
-    unlink("~/ccImpute/datasets/temp_dca/", recursive = TRUE)
-    unlink("~/ccImpute/datasets/temp_dca.csv")
+    unlink(paste("~/ccImpute/datasets/temp_dca_", dataset, "/", sep=""), recursive = TRUE)
+    unlink(paste("~/ccImpute/datasets/temp_dca_", dataset, ".csv", sep=""))
   }else if(method == "deepimpute"){
-    write.csv(x=X, "~/ccImpute/datasets/temp.csv")
-    system("deepImpute ~/ccImpute/datasets/temp.csv -o ~/ccImpute/datasets/temp2.csv --cores 15")
-    X2 <- read.csv("~/ccImpute/datasets/temp2.csv", row.names = 1, header=TRUE)
+    write.csv(x=X, paste("~/ccImpute/datasets/temp_", dataset, ".csv", sep=""))
+    system(paste("deepImpute ~/ccImpute/datasets/temp_", dataset, ".csv", " -o ~/ccImpute/datasets/temp2_", dataset, ".csv --cores 15", sep=""))
+    X2 <- read.csv(paste("~/ccImpute/datasets/temp2_", dataset, ".csv", sep=""), row.names = 1, header=TRUE)
     librarySizes <- colSums(X2)
     X_norm <- t(t(X2)/librarySizes)*1000000
     X_imp <- log2(X_norm + 1)
-    unlink("~/ccImpute/datasets/temp.csv")
-    unlink("~/ccImpute/datasets/temp2.csv")
+    unlink(paste("~/ccImpute/datasets/temp1_", dataset, ".csv", sep=""))
+    unlink(paste("~/ccImpute/datasets/temp2_", dataset, ".csv", sep=""))
   }
   
   end_time <- Sys.time()
@@ -213,7 +213,7 @@ driver <- function(method, dataset, repeats){
   
   num_clusters = length(unique(labels))
   
-  data_aris <- replicate(repeats, impute(method, X, X_log, labels, num_clusters))
+  data_aris <- replicate(repeats, impute(method, X, X_log, labels, num_clusters, dataset))
   
   means <- rowMeans(data_aris)
   stdevs <- rowSds(data_aris)
