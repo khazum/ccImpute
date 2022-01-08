@@ -21,6 +21,7 @@ module unload gcc
 module load intel/19.0.5
 module load gcc/9.3.0
 module load boost/gnu/1.72.0
+module load hdf5/intel/serial/1.12.0
 module load python
 
 srun ~/R-4.1.2/build/bin/Rscript --vanilla ~/ccImpute/master.R $2 $3 $4

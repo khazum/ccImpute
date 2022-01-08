@@ -4,19 +4,17 @@ suppressPackageStartupMessages({
   library(SummarizedExperiment)
   library(SC3)
   library(SingleCellExperiment)
-  library(rlist)
   library(stats)
   library(Rcpp)
   library(cluster)
-  library(parallelDist)
   library(DrImpute)
   library(foreach)
   library(doParallel)
   library(Rmagic)
   library(scImpute)
   
-  sourceCpp("/home/marcinmalec/Desktop/rnaseq_imputation/wCorr_m.cpp")
-  sourceCpp("/home/marcinmalec/Desktop/rnaseq_imputation/solver.cpp")
+  sourceCpp("~/ccImpute/cpp/wCorr_m.cpp")
+  sourceCpp("~/ccImpute/cpp/solver.cpp")
 })
 
 ccImpute <- function(clust_alg, X, X_log, labels, num_clusters) {
@@ -95,37 +93,37 @@ impute <- function(method, X, X_log, labels, num_clusters) {
   }else if(method == "magic"){
     X_imp <- t(as.matrix(magic(t(X_log), genes="all_genes")))
   }else if(method == "scimpute"){
-    write.csv(x=X, "~/ccImpute/datasets/temp.csv")
+    write.csv(x=X, "~/ccImpute/datasets/temp_sci.csv")
     
     scimpute(# full path to raw count matrix
-      count_path = "~/ccImpute/datasets/temp.csv",
+      count_path = "~/ccImpute/datasets/temp_sci.csv",
       infile = "csv",           # format of input file
       outfile = "csv",          # format of output file
-      out_dir = "~/ccImpute/datasets/temp/",           # full path to output directory
+      out_dir = "~/ccImpute/datasets/temp_sci/",           # full path to output directory
       labeled = FALSE,          # cell type labels not available
       drop_thre = 0.5,          # threshold set on dropout probability
       Kcluster = num_clusters,             # 2 cell subpopulations
       ncores = 15)              # number of cores used in parallel co
     end_time <- Sys.time()
     
-    X2 = read.csv("~/ccImpute/datasets/temp/scimpute_count.csv",row.names = 1, header=TRUE)
+    X2 = read.csv("~/ccImpute/datasets/temp_sci/scimpute_count.csv",row.names = 1, header=TRUE)
     
     librarySizes <- colSums(X2)
     X_norm <- t(t(X2)/librarySizes)*1000000
     
     X_imp <- log2(X_norm + 1)
     
-    unlink("~/ccImpute/datasets/temp/", recursive = TRUE)
-    unlink("~/ccImpute/datasets/temp.csv")
+    unlink("~/ccImpute/datasets/temp_sci/", recursive = TRUE)
+    unlink("~/ccImpute/datasets/temp_sci.csv")
   }else if(method == "dca"){
-    write.csv(x=X, "~/ccImpute/datasets/temp.csv")
-    system(" dca ~/ccImpute/datasets/temp.csv ~/ccImpute/datasets/temp/ --threads 15")
-    X2 <- read.csv("~/ccImpute/datasets/temp/mean.tsv", sep="\t", row.names = 1, header=TRUE)
+    write.csv(x=X, "~/ccImpute/datasets/temp_dca.csv")
+    system(" dca ~/ccImpute/datasets/temp_dca.csv ~/ccImpute/datasets/temp_dca/ --threads 15")
+    X2 <- read.csv("~/ccImpute/datasets/temp_dca/mean.tsv", sep="\t", row.names = 1, header=TRUE)
     librarySizes <- colSums(X2)
     X_norm <- t(t(X2)/librarySizes)*1000000
     X_imp <- log2(X_norm + 1)
-    unlink("~/ccImpute/datasets/temp/", recursive = TRUE)
-    unlink("~/ccImpute/datasets/temp.csv")
+    unlink("~/ccImpute/datasets/temp_dca/", recursive = TRUE)
+    unlink("~/ccImpute/datasets/temp_dca.csv")
   }else if(method == "deepimpute"){
     write.csv(x=X, "~/ccImpute/datasets/temp.csv")
     system("deepImpute ~/ccImpute/datasets/temp.csv -o ~/ccImpute/datasets/temp2.csv --cores 15")
@@ -224,7 +222,7 @@ driver <- function(method, dataset, repeats){
   print("c1, c2, time, prop_zeroes_rm, silh_pca_avr")
   print(means)
   print(stdevs)
-  fileConn<-eval(parse(text=paste('file("~/ccImpute/results/', method, "_", dataset, '_', repeats, '_', time(), '")', sep="")))
+  fileConn<-eval(parse(text=paste('file("~/ccImpute/results/', method, "_", dataset, '_', repeats, '_', Sys.time(), '")', sep="")))
   writeLines(c("c1,c2,time, prop_zeroes removed, silh_pca_avr",paste(method,dataset,repeats, "||", "Genes(rows):", nrow(X), "Cells(cols):", ncol(X), "||", sep=" "), means, stdevs), fileConn)
   close(fileConn)
 }
