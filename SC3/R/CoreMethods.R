@@ -399,56 +399,61 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   # stop local cluster
   # parallel::stopCluster(cl)
   t <- NULL
-  if(ncol(object) <= 2000){
-    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
-  }else{
-    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],NULL)
-    
-    eigs <- t$sdev^2
-    SD = sqrt(eigs)
-    prop = eigs/sum(eigs)
-    cum = cumsum(eigs)/sum(eigs)
-
-    upper_bound = max(n_dim)
-    lower_bound = 0
-
-    for (i in 1:length(t$sdev)) {
-      if(prop[i] <= .002){
-        lower_bound <- i
-        break
-      }
-    }
-    for (i in 1:length(t$sdev)) {
-      if(prop[i] <= .0008){
-        upper_bound <- i
-        break
-      }
-    }
-    # upper_bound <- min(max(n_dim), upper_bound)
-    increment <- floor((upper_bound-lower_bound)/15)
-
-    # define number of cells and region of dimensions
-    n_dim <-lower_bound:upper_bound
-    # for large datasets restrict the region of dimensions to 15
-    if (length(n_dim) > 15) {
-      increment <- floor((upper_bound-lower_bound)/15)
-      n_dim <- seq(lower_bound, upper_bound, increment)
-    }
-    metadata(object)$sc3$n_dim <- n_dim
-  }
-  transfs <- list(t$rotation)
+  # if(ncol(object) <= 2000){
+  # t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
+  # }else{
+  t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],NULL)
   
-  names(transfs) <- paste(hash.table[, 1], hash.table[, 2], sep = "_")
+  eigs <- t$sdev^2
+  SD = sqrt(eigs)
+  prop = eigs/sum(eigs)
+  cum = cumsum(eigs)/sum(eigs)
+  m <- min(n_dim)
+  m2 <- max(n_dim)
+  print(c(prop[m], prop[m2]))
+  print(c(cum[m], cum[m2]))
   
-  metadata(object)$sc3$transformations <- transfs
-  # remove distances after calculating transformations
-  metadata(object)$sc3$distances <- NULL
   
-  # put a copy of transformations to @reducedDims when applicable
-  # if (nrow(transfs[[1]]) == ncol(object)) {
-  #     reducedDims(object) <- SimpleList(transformations)
+  # upper_bound = max(n_dim)
+  # lower_bound = 0
+  # 
+  # for (i in 1:length(t$sdev)) {
+  #   if(prop[i] <= .002){
+  #     lower_bound <- i
+  #     break
+  #   }
   # }
-  return(object)
+  # for (i in 1:length(t$sdev)) {
+  #   if(prop[i] <= .0008){
+  #     upper_bound <- i
+  #     break
+  #   }
+  # # }
+  
+  
+  # 
+  #     # define number of cells and region of dimensions
+  #     n_dim <-lower_bound:upper_bound
+  #     # for large datasets restrict the region of dimensions to 15
+  #     if (length(n_dim) > 15) {
+  #       increment <- floor((upper_bound-lower_bound)/15)
+  #       n_dim <- seq(lower_bound, upper_bound, increment)
+  #     }
+  #     metadata(object)$sc3$n_dim <- n_dim
+}
+transfs <- list(t$rotation)
+
+names(transfs) <- paste(hash.table[, 1], hash.table[, 2], sep = "_")
+
+metadata(object)$sc3$transformations <- transfs
+# remove distances after calculating transformations
+metadata(object)$sc3$distances <- NULL
+
+# put a copy of transformations to @reducedDims when applicable
+# if (nrow(transfs[[1]]) == ncol(object)) {
+#     reducedDims(object) <- SimpleList(transformations)
+# }
+return(object)
 }
 
 #' @rdname sc3_calc_transfs
@@ -522,7 +527,7 @@ sc3_kmeans.SingleCellExperiment <- function(object, ks, clust_method) {
   cl <- parallel::makeCluster(n_cores, outfile = "")
   doParallel::registerDoParallel(cl, cores = n_cores)
   
-  pb <- utils::txtProgressBar(min = 1, max = nrow(hash.table), style = 3)
+  # pb <- utils::txtProgressBar(min = 1, max = nrow(hash.table), style = 3)
   
   # transf <- get(hash.table$transf[1], transfs)
   # dist_out <- dist(transf[, 1:hash.table$n_dim[1]], method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
