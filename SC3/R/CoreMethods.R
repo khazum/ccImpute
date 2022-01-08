@@ -440,20 +440,20 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   #       n_dim <- seq(lower_bound, upper_bound, increment)
   #     }
   #     metadata(object)$sc3$n_dim <- n_dim
-}
-transfs <- list(t$rotation)
-
-names(transfs) <- paste(hash.table[, 1], hash.table[, 2], sep = "_")
-
-metadata(object)$sc3$transformations <- transfs
-# remove distances after calculating transformations
-metadata(object)$sc3$distances <- NULL
-
-# put a copy of transformations to @reducedDims when applicable
-# if (nrow(transfs[[1]]) == ncol(object)) {
-#     reducedDims(object) <- SimpleList(transformations)
-# }
-return(object)
+  # }
+  transfs <- list(t$rotation)
+  
+  names(transfs) <- paste(hash.table[, 1], hash.table[, 2], sep = "_")
+  
+  metadata(object)$sc3$transformations <- transfs
+  # remove distances after calculating transformations
+  metadata(object)$sc3$distances <- NULL
+  
+  # put a copy of transformations to @reducedDims when applicable
+  # if (nrow(transfs[[1]]) == ncol(object)) {
+  #     reducedDims(object) <- SimpleList(transformations)
+  # }
+  return(object)
 }
 
 #' @rdname sc3_calc_transfs
