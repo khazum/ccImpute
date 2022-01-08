@@ -398,8 +398,12 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   
   # stop local cluster
   # parallel::stopCluster(cl)
-  t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
-  if (ncol(object) > 1000){
+  t <- NULL
+  if(ncol(object) <= 2000){
+    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],max(n_dim))
+  }else{
+    t <- transformation(get(hash.table[1, 1], dists), hash.table[1, 2],nrow(n_dim))
+    
     eigs <- t$sdev^2
     SD = sqrt(eigs)
     prop = eigs/sum(eigs)
@@ -420,7 +424,7 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
         break
       }
     }
-    upper_bound <- min(max(n_dim), upper_bound)
+    # upper_bound <- min(max(n_dim), upper_bound)
     increment <- floor((upper_bound-lower_bound)/15)
 
     # define number of cells and region of dimensions
