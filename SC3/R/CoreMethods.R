@@ -420,7 +420,7 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
         break
       }
     }
-
+    upper_bound <- min(max(n_dim), upper_bound)
     increment <- floor((upper_bound-lower_bound)/15)
 
     # define number of cells and region of dimensions
