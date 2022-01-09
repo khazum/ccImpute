@@ -408,8 +408,9 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   SD = sqrt(eigs)
   prop = eigs/sum(eigs)
   cum = cumsum(eigs)/sum(eigs)
-  # m <- min(n_dim)
-  # m2 <- max(n_dim)
+  m <- min(n_dim)
+  m2 <- max(n_dim)
+  print(c(SD[m], SD[m2]))
   print(c(prop[m], prop[m2]))
   print(c(cum[m], cum[m2]))
   
@@ -418,17 +419,18 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   lower_bound = 0
   
   for (i in 1:length(t$sdev)) {
-    if(prop[i] <= .002){
+    if(cum[i] >= .70){
       lower_bound <- i
       break
     }
   }
   for (i in 1:length(t$sdev)) {
-    if(prop[i] <= .0008){
+    if(cum[i] >= .90){
       upper_bound <- i
       break
     }
   }
+  print(c(SD[lower_bound], SD[upper_bound]))
   print(c(prop[lower_bound], prop[upper_bound]))
   print(c(cum[lower_bound], cum[upper_bound]))
   
@@ -540,7 +542,7 @@ sc3_kmeans.SingleCellExperiment <- function(object, ks, clust_method) {
   # calculate the 6 distinct transformations in parallel
   labs <- foreach::foreach(i = 1:nrow(hash.table)) %dorng% {
     try({
-      utils::setTxtProgressBar(pb, i)
+      # utils::setTxtProgressBar(pb, i)
       transf <- get(hash.table$transf[i], transfs)
       
       if(clust_method == "dcem-star"){
@@ -559,7 +561,7 @@ sc3_kmeans.SingleCellExperiment <- function(object, ks, clust_method) {
     })
   }
   
-  close(pb)
+  # close(pb)
   
   # stop local cluster
   parallel::stopCluster(cl)
