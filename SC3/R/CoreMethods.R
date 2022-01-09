@@ -419,13 +419,13 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   lower_bound = 0
   
   for (i in 1:length(t$sdev)) {
-    if(prop[i] <= .02){
+    if(prop[i] <= .001){
       lower_bound <- i
       break
     }
   }
   for (i in 1:length(t$sdev)) {
-    if(prop[i] <= .08){
+    if(prop[i] <= .008){
       upper_bound <- i
       break
     }
