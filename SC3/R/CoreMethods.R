@@ -408,38 +408,39 @@ sc3_calc_transfs.SingleCellExperiment <- function(object) {
   SD = sqrt(eigs)
   prop = eigs/sum(eigs)
   cum = cumsum(eigs)/sum(eigs)
-  m <- min(n_dim)
-  m2 <- max(n_dim)
+  # m <- min(n_dim)
+  # m2 <- max(n_dim)
   print(c(prop[m], prop[m2]))
   print(c(cum[m], cum[m2]))
   
   
-  # upper_bound = max(n_dim)
-  # lower_bound = 0
-  # 
-  # for (i in 1:length(t$sdev)) {
-  #   if(prop[i] <= .002){
-  #     lower_bound <- i
-  #     break
-  #   }
-  # }
-  # for (i in 1:length(t$sdev)) {
-  #   if(prop[i] <= .0008){
-  #     upper_bound <- i
-  #     break
-  #   }
-  # # }
+  upper_bound = 0
+  lower_bound = 0
+  
+  for (i in 1:length(t$sdev)) {
+    if(prop[i] <= .002){
+      lower_bound <- i
+      break
+    }
+  }
+  for (i in 1:length(t$sdev)) {
+    if(prop[i] <= .0008){
+      upper_bound <- i
+      break
+    }
+  }
+  print(c(prop[lower_bound], prop[upper_bound]))
+  print(c(cum[lower_bound], cum[upper_bound]))
   
   
-  # 
-  #     # define number of cells and region of dimensions
-  #     n_dim <-lower_bound:upper_bound
-  #     # for large datasets restrict the region of dimensions to 15
-  #     if (length(n_dim) > 15) {
-  #       increment <- floor((upper_bound-lower_bound)/15)
-  #       n_dim <- seq(lower_bound, upper_bound, increment)
-  #     }
-  #     metadata(object)$sc3$n_dim <- n_dim
+  # define number of cells and region of dimensions
+  n_dim <-lower_bound:upper_bound
+  # for large datasets restrict the region of dimensions to 15
+  if (length(n_dim) > 15) {
+    increment <- floor((upper_bound-lower_bound)/15)
+    n_dim <- seq(lower_bound, upper_bound, increment)
+  }
+  metadata(object)$sc3$n_dim <- n_dim
   # }
   transfs <- list(t$rotation)
   
