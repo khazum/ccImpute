@@ -1,0 +1,12 @@
+c1,c2,time, prop_zeroes removed, silh_pca_avr
+ccImpute_kmeans sim-8000 1 || Genes(rows): 19861 Cells(cols): 8000 ||
+0.996046482037513
+0.849512642869247
+582.881507635117
+0.0539223352298474
+0.0216250339691919
+NA
+NA
+NA
+NA
+NA

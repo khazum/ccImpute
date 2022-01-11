@@ -2,7 +2,7 @@
 sbatch <<EOT
 #!/bin/bash
 
-#SBATCH -J ccimpute
+#SBATCH -J $2
 #SBATCH -p general
 #SBATCH -o filename_%j.txt
 #SBATCH -e filename_%j.err
