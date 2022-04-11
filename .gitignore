@@ -1,0 +1,6 @@
+inst/doc
+.Rhistory
+*.Rproj*
+.RData
+/doc/
+/Meta/

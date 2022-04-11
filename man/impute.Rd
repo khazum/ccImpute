@@ -6,15 +6,15 @@
 algorithm}
 \usage{
 impute(
-  logX,
-  useRanks = TRUE,
-  pcaMin,
-  pcaMax,
-  k,
-  consMin = 0.65,
-  nCores,
-  kmNStart,
-  kmMax = 1000
+    logX,
+    useRanks = TRUE,
+    pcaMin,
+    pcaMax,
+    k,
+    consMin = 0.65,
+    nCores,
+    kmNStart,
+    kmMax = 1000
 )
 }
 \arguments{
@@ -58,4 +58,8 @@ imputed missing values.
 \description{
 Performs imputation of dropout values in scRNA-seq data using ccImpute
 algorithm
+}
+\examples{
+exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
+impute(exp_matrix, k = 2, nCores = 2)
 }

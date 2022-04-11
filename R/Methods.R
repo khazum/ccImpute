@@ -36,6 +36,9 @@
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib ccImpute
 #' @export
+#' @examples
+#' exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
+#' impute(exp_matrix, k = 2, nCores = 2)
 impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
                         nCores, kmNStart, kmMax=1000) {
 
@@ -79,12 +82,12 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
     consMtx <- getPConsMtx(kmResults, consMin)
     logXt <- t(logX)
     dropIds <- findDropouts(logXt, consMtx)
-    impLogX <- t(solveDrops(consMtx, logXt, which(dropIds, arr.ind = TRUE), nCores))
-    rownames(impLogX) <- rownames(logX)
-    colnames(impLogX) <- colnames(logX)
-
+    iLogX <- t(solveDrops(consMtx, logXt, which(dropIds, arr.ind = TRUE),
+                            nCores))
+    rownames(iLogX) <- rownames(logX)
+    colnames(iLogX) <- colnames(logX)
     message("Imputation finished.")
-    return(impLogX)
+    return(iLogX)
 }
 
 #' This function performs \code{\link[stats]{kmeans}} clustering of the
@@ -115,7 +118,7 @@ kmeans <- function(input, k, nCores, nDim, kmNStart, kmMax) {
     doParallel::registerDoParallel(cl, cores = min(length(nDim), nCores))
 
     i <- NULL
-    results <- foreach::foreach(i = seq_along(nDim), .packages = c("stats")) %dopar% {
+    results <- foreach::foreach(i = seq_along(nDim)) %dopar% {
         try({
             stats::kmeans(input[, seq_len(nDim[i])], k, iter.max = kmMax,
                             nstart = kmNStart)$cluster

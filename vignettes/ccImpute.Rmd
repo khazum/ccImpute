@@ -29,12 +29,12 @@ clustering performance characteristics on datasets with known cell identities.
 
 
 # Data Pre-processing
-`ccImpute` is an imputation tool and it does not provide functions for the 
-pre-processing the data. This tool expects the user to preprocess the data prior 
-to using it. The input data is expected to be in log-normalized format. This
-manual includes sample minimal pre-processing of dataset from 
+`ccImpute` is an imputation tool and it does not provide functions for the
+pre-processing the data. This tool expects the user to preprocess the data
+prior to using it. The input data is expected to be in log-normalized format.
+This manual includes sample minimal pre-processing of dataset from
 [scRNAseq database](http://bioconductor.org/packages/scRNAseq) using the
-[scater tool](http://bioconductor.org/packages/scater). 
+[scater tool](http://bioconductor.org/packages/scater).
 
 # Sample Usage
 ## Required libraries
@@ -47,9 +47,9 @@ library(stats)
 library(mclust)
 ```
 ## Input Data.
-The following code loads Darmanis dataset(Darmanis et al. "A survey of human 
-brain transcriptome diversity at the single cell level."(2015)) and computes log-transformed 
-normalized counts:
+The following code loads Darmanis dataset(Darmanis et al. "A survey of human
+brain transcriptome diversity at the single cell level."(2015)) and computes
+log-transformed normalized counts:
 ```{r message=FALSE, warning=FALSE}
 data <- DarmanisBrainData()
 data <- logNormCounts(data)
@@ -71,7 +71,7 @@ adjustedRandIndex(assgmts, colData(data)$cell.type)
 ```
 ## Perform the imputation and update the logcounts assay.
 ```{r}
-logcounts(data) <- impute(assays(data)$logcounts, k = k)
+logcounts(data) <- impute(assays(data)$logcounts, k = k, nCores = 2)
 ```
 ## Recompute Adjusted Rand Index (ARI) with imputation.
 ```{r}
