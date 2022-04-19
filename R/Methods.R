@@ -76,7 +76,7 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
     # Address missing kmNStart parameter
     if(missing(kmNStart)){kmNStart <- ifelse(n > 2000, 50, 1000)}
 
-    kmResults <- kmeans(distPCA$rotation, k, nCores, nDim, kmNStart, kmMax)
+    kmResults <- kmeans(distPCA$rotation[], k, nCores, nDim, kmNStart, kmMax)
     rm(distPCA) # Conserve space
 
     consMtx <- getPConsMtx(kmResults, consMin)
@@ -114,13 +114,18 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
 #' @importFrom doParallel registerDoParallel
 #' @importFrom stats kmeans
 kmeans <- function(input, k, nCores, nDim, kmNStart, kmMax) {
-    cl <- parallel::makeCluster(min(length(nDim), nCores), outfile = "")
-    doParallel::registerDoParallel(cl, cores = min(length(nDim), nCores))
+    input <- input[,seq_len(nDim[length(nDim)])] #conserve space
+    # Forking is faster but only available on Unix systems
+    pType <- ifelse(.Platform$OS.type=="windows", "PSOCK","FORK")
+    cl <- parallel::makeCluster(min(length(nDim), nCores), 
+                                outfile = "", type=pType)
+    doParallel::registerDoParallel(cl)
 
     i <- NULL
-    results <- foreach::foreach(i = seq_along(nDim)) %dopar% {
+    results <- foreach::foreach(i = nDim, 
+                .inorder = FALSE) %dopar% {
         try({
-            stats::kmeans(input[, seq_len(nDim[i])], k, iter.max = kmMax,
+            stats::kmeans(input[, seq_len(i)], k, iter.max = kmMax,
                             nstart = kmNStart)$cluster
         })
     }
