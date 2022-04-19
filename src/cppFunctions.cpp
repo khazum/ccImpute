@@ -1,14 +1,19 @@
 #define ARMA_ALLOW_FAKE_GCC
+// [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 #include <Rmath.h>
-#include <omp.h>
 #include <cstdlib>
 #include <vector>
 #include <unordered_map>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace arma;
 
 // [[Rcpp::plugins(openmp)]]
+
 
 //' Computes consensus matrix given cluster labels
 //'
@@ -87,7 +92,9 @@ arma::vec wrankFast(arma::vec x, const arma::vec& w) {
 // @return weighted ranking of all vectors (columns of x)
 arma::mat wrankFastAll(arma::mat x, const arma::vec& w) {
     arma::mat rank_m(x.n_rows, x.n_cols);
+    #ifdef _OPENMP
     #pragma omp parallel for shared(rank_m)
+    #endif
     for(unsigned int i = 0; i < x.n_cols; ++i){
         rank_m.col(i) = wrankFast(x.col(i),w);
     }
@@ -112,14 +119,18 @@ arma::mat wCorDist(arma::mat x, const arma::vec& w, const bool useRanks,
     arma::mat temp = useRanks ? wrankFastAll(x,w) : x;
 
     double sumw = arma::sum(w);
-
+    
+    #ifdef _OPENMP
     #pragma omp parallel for shared(temp)
+    #endif
     for(unsigned int i = 0; i < temp.n_cols; ++i){
         temp.col(i) = temp.col(i) - arma::sum(w%temp.col(i))/sumw;
     }
     arma::mat corrs(temp.n_cols,temp.n_cols);
 
+    #ifdef _OPENMP
     #pragma omp parallel for shared(corrs)
+    #endif
     for(unsigned int i = 0; i < temp.n_cols; ++i){
         for(unsigned int j = i+1; j < temp.n_cols; ++j){
             arma::vec t1 = temp.col(i);
@@ -161,7 +172,9 @@ arma::mat solveDrops(arma::mat cm, arma::mat em, arma::mat ids, const int n_core
         col2rows[col].push_back(ids.at(i,0)-1);
     }
 
+    #ifdef _OPENMP
     #pragma omp parallel for shared(em, col2rows, keys)
+    #endif
     for(unsigned int i=0; i < keys.size(); ++i){
         unsigned int ci = keys[i];
         std::vector<int> rows_indices = col2rows[ci];
