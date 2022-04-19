@@ -7,7 +7,7 @@ Dropout events in scRNA-seq datasets make the lowly expressed genes indistinguis
 To install the latest development version:
 ```
 install.packages("devtools")
-devtools::install_github("hemberg-lab/SC3")
+devtools::install_github("khazum/ccImpute")
 ```
 ## Issues
 Please use [this page](https://github.com/khazum/ccImpute/issues) to report bugs, comments and suggestions.
