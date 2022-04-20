@@ -119,7 +119,7 @@ kmeans <- function(input, k, nCores, nDim, kmNStart, kmMax) {
     cl <- parallel::makeCluster(min(length(nDim), nCores), outfile = "")
     doParallel::registerDoParallel(cl)
 
-    results <- foreach::foreach(i = nDim, .packages = c("stats")
+    results <- foreach::foreach(i = nDim, .packages = c("stats"),
                 .inorder = FALSE) %dopar% {
         try({
             stats::kmeans(input[, seq_len(i)], k, iter.max = kmMax,
