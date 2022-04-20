@@ -114,7 +114,9 @@ arma::mat wrankFastAll(arma::mat x, const arma::vec& w) {
 arma::mat wCorDist(arma::mat x, const arma::vec& w, const bool useRanks,
                        const unsigned int n_cores){
     arma::mat rank_m(x.n_rows, x.n_cols);
+    #ifdef _OPENMP
     omp_set_num_threads(n_cores);
+    #endif
 
     arma::mat temp = useRanks ? wrankFastAll(x,w) : x;
 
@@ -154,8 +156,10 @@ arma::mat wCorDist(arma::mat x, const arma::vec& w, const bool useRanks,
 //'@return imputed expression matrix
 // [[Rcpp::export]]
 arma::mat solveDrops(arma::mat cm, arma::mat em, arma::mat ids, const int n_cores) {
+    #ifdef _OPENMP
     omp_set_num_threads(n_cores);
-
+    #endif
+    
     //map row to columns
     std::unordered_map<int, std::vector<int>> col2rows;
     std::vector<int> keys;
