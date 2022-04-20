@@ -115,14 +115,11 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
 #' @importFrom stats kmeans
 kmeans <- function(input, k, nCores, nDim, kmNStart, kmMax) {
     input <- input[,seq_len(nDim[length(nDim)])] #conserve space
-    # Forking is faster but only available on Unix systems
-    pType <- ifelse(.Platform$OS.type=="windows", "PSOCK","FORK")
-    cl <- parallel::makeCluster(min(length(nDim), nCores), 
-                                outfile = "", type=pType)
+    i <- NULL
+    cl <- parallel::makeCluster(min(length(nDim), nCores), outfile = "")
     doParallel::registerDoParallel(cl)
 
-    i <- NULL
-    results <- foreach::foreach(i = nDim, 
+    results <- foreach::foreach(i = nDim, .packages = c("stats")
                 .inorder = FALSE) %dopar% {
         try({
             stats::kmeans(input[, seq_len(i)], k, iter.max = kmMax,
