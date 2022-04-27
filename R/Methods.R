@@ -32,8 +32,9 @@
 #' @importFrom parallel detectCores
 #' @importFrom stats prcomp
 #' @importFrom matrixStats rowVars
-#' @importFrom SIMLR SIMLR_Estimate_Number_of_Clusters
 #' @importFrom Rcpp sourceCpp
+#' @importFrom SIMLR SIMLR_Estimate_Number_of_Clusters
+#' 
 #' @useDynLib ccImpute
 #' @export
 #' @examples
@@ -41,7 +42,6 @@
 #' impute(exp_matrix, k = 2, nCores = 2)
 impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
                         nCores, kmNStart, kmMax=1000) {
-
     n <- ncol(logX) #number of samples
     message(c("Running ccImpute on dataset with ", n, " cells."))
 
@@ -53,7 +53,11 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
         }
         if (nCores > 1){nCores <- nCores - 1} # Use all but one core
     }
-
+    if(missing(k)){
+        k <- SIMLR::SIMLR_Estimate_Number_of_Clusters(logX, NUMC = 2:12)
+        k <- which.min((k$K1+k$K2))+1
+    }
+    
     # Transform the data to distance matrix form
     distM <- wCorDist(logX, rowVars(logX), useRanks, nCores)
     names(distM) <- c(names, ifelse(useRanks, "Spearman", "Pearson"))
@@ -61,17 +65,11 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
     # Perform a PCA dimensionality reduction on the distance matrix
     distPCA <- prcomp(distM, center = TRUE, scale. = TRUE, retx = FALSE)
     rm(distM) # Conserve space
+    
 
     # Figure out the sub-datasets in terms of PCA feature indexing
-    if(missing(pcaMin) || missing(pcaMax)){
-        pcaMin=NULL
-        pcaMax=NULL
-    }
+    if(missing(pcaMin) || missing(pcaMax)){pcaMin <- pcaMax <- NULL}
     nDim <- findNDim(n, distPCA, pcaMin, pcaMax)
-
-    if(missing(k)){  # Address missing k parameter
-        k <- SIMLR::SIMLR_Estimate_Number_of_Clusters(logX, NUMC = 2:8)
-    }
 
     # Address missing kmNStart parameter
     if(missing(kmNStart)){kmNStart <- ifelse(n > 2000, 50, 1000)}
@@ -84,6 +82,7 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
     dropIds <- findDropouts(logXt, consMtx)
     iLogX <- t(solveDrops(consMtx, logXt, which(dropIds, arr.ind = TRUE),
                             nCores))
+
     rownames(iLogX) <- rownames(logX)
     colnames(iLogX) <- colnames(logX)
     message("Imputation finished.")
@@ -116,7 +115,9 @@ impute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
 kmeans <- function(input, k, nCores, nDim, kmNStart, kmMax) {
     input <- input[,seq_len(nDim[length(nDim)])] #conserve space
     i <- NULL
-    cl <- parallel::makeCluster(min(length(nDim), nCores), outfile = "")
+    pType <- ifelse(.Platform$OS.type=="windows", "PSOCK", "FORK")
+    cl <- parallel::makeCluster(min(length(nDim), nCores), 
+                                outfile = "", type = pType)
     doParallel::registerDoParallel(cl)
 
     results <- foreach::foreach(i = nDim, .packages = c("stats"),

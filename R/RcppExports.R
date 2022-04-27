@@ -9,6 +9,17 @@ getConsMtx <- function(dat) {
     .Call('_ccImpute_getConsMtx', PACKAGE = 'ccImpute', dat)
 }
 
+#' Computes imputed expression matrix using linear eq solver.
+#'
+#'@param cm processed consensus matrix
+#'@param em expression matrix
+#'@param ids location of values determined to be dropout events
+#'@param n_cores number of cores to use for parallel computation.
+#'@return imputed expression matrix
+solveDrops <- function(cm, em, ids, n_cores) {
+    .Call('_ccImpute_solveDrops', PACKAGE = 'ccImpute', cm, em, ids, n_cores)
+}
+
 #' Computes a weighted Pearson distance measure matrix. If ranks are used
 #' this measure turns into weighted Spearman distance measure matrix.
 #'
@@ -20,16 +31,5 @@ getConsMtx <- function(dat) {
 #' this measure turns into weighted Spearman distance measure matrix.
 wCorDist <- function(x, w, useRanks, n_cores) {
     .Call('_ccImpute_wCorDist', PACKAGE = 'ccImpute', x, w, useRanks, n_cores)
-}
-
-#' Computes imputed expression matrix using linear eq solver.
-#'
-#'@param cm processed consensus matrix
-#'@param em expression matrix
-#'@param ids location of values determined to be dropout events
-#'@param n_cores number of cores to use for parallel computation.
-#'@return imputed expression matrix
-solveDrops <- function(cm, em, ids, n_cores) {
-    .Call('_ccImpute_solveDrops', PACKAGE = 'ccImpute', cm, em, ids, n_cores)
 }
 
