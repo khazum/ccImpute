@@ -10,7 +10,9 @@
 // [[Rcpp::depends(RcppEigen)]]
 // [[Rcpp::plugins(openmp)]]
 
+#define NDEBUG 
 #include <RcppEigen.h>
+
 //' Computes consensus matrix given cluster labels
 //'
 //' @param dat a matrix containing clustering solutions in columns
