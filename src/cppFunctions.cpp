@@ -1,14 +1,18 @@
-#define ARMA_ALLOW_FAKE_GCC
 #include <RcppArmadillo.h>
+#define NDEBUG 
+#include <RcppEigen.h>
+
 #include <Rmath.h>
 #include <cstdlib>
-
+#include <Rmath.h>
+#include <vector>
+#include <unordered_map>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-// [[Rcpp::depends("RcppArmadillo")]]
+// [[Rcpp::depends("RcppArmadillo", "RcppEigen")]]
 // [[Rcpp::plugins(openmp)]]
 
 

@@ -2,7 +2,7 @@ Package: ccImpute
 Type: Package
 Title: ccImpute: an accurate and scalable consensus clustering based approach to
 	impute dropout events in the single-cell RNA-seq data
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: person("Marcin", "Malec",
   email = "mamalec@iu.edu",
   role = c("cre", "aut"),
