@@ -6,8 +6,11 @@
 
 #include <RcppArmadillo.h>
 
-#define NDEBUG 
+#define NDEBUG 1
+
+#ifdef NDEBUG
 #include <RcppEigen.h>
+#endif
 
 #ifdef _OPENMP
 #include <omp.h>
