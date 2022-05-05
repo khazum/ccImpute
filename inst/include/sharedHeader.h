@@ -4,13 +4,9 @@
 // [[Rcpp::depends("RcppArmadillo", "RcppEigen")]]
 // [[Rcpp::plugins(openmp)]]
 
-#include <RcppArmadillo.h>
-
-#define NDEBUG 1
-
-#ifdef NDEBUG
 #include <RcppEigen.h>
-#endif
+#undef Rcpp_hpp
+#include <RcppArmadillo.h>
 
 #ifdef _OPENMP
 #include <omp.h>
