@@ -1,16 +1,4 @@
-#define ARMA_ALLOW_FAKE_GCC
-#include <RcppArmadillo.h>
-#include <Rmath.h>
-#include <cstdlib>
-
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-// [[Rcpp::depends("RcppArmadillo")]]
-// [[Rcpp::plugins(openmp)]]
-
+#include <cppImports.h>
 
 // Computes weighted ranking of a single vector.
 // Helper function needed to compute weighted Spearman correlation.

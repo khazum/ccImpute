@@ -1,17 +1,6 @@
-#include <Rmath.h>
-#include <cstdlib>
+#include <cppImports.h>
 #include <vector>
 #include <unordered_map>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-// [[Rcpp::depends(RcppEigen)]]
-// [[Rcpp::plugins(openmp)]]
-
-#define NDEBUG 
-#include <RcppEigen.h>
 
 //' Computes consensus matrix given cluster labels
 //'
