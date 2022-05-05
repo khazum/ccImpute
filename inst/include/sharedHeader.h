@@ -1,5 +1,5 @@
-#ifndef cppImports_H
-#define cppImports_H
+#ifndef cppFunctions_H
+#define cppFunctions_H
 
 // [[Rcpp::depends("RcppArmadillo", "RcppEigen")]]
 // [[Rcpp::plugins(openmp)]]
