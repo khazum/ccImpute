@@ -2,7 +2,7 @@ Package: ccImpute
 Type: Package
 Title: ccImpute: an accurate and scalable consensus clustering based approach to
 	impute dropout events in the single-cell RNA-seq data
-Version: 0.99.8
+Version: 0.99.9
 Authors@R: person("Marcin", "Malec",
   email = "mamalec@iu.edu",
   role = c("cre", "aut"),
@@ -18,7 +18,7 @@ Description: Dropout events make the lowly expressed genes indistinguishable
 	characteristics on datasets with known cell identities.
 License: GPL-3
 Imports: Rcpp, parallel, doParallel, foreach, matrixStats, stats, SIMLR
-LinkingTo: Rcpp, RcppArmadillo, RcppEigen
+LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.2
