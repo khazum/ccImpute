@@ -55,7 +55,7 @@
 #' exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
 #' ccImpute(exp_matrix, k = 2, nCores = 2)
 ccImpute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
-                     kmNStart, kmMax=1000) {
+                        kmNStart, kmMax=1000) {
     logX <- as.matrix(logX) 
     n <- ncol(logX) #number of samples
     message(c("Running ccImpute on dataset with ", n, " cells."))
@@ -122,8 +122,8 @@ ccImpute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
 #' @keywords internal
 #' @importFrom stats kmeans
 kmAux <- function(i, input, k, kmNStart, kmMax) {
-  x <- input[, seq_len(i)]
-  return(stats::kmeans(x, k, iter.max = kmMax, nstart = kmNStart)$cluster)
+    x <- input[, seq_len(i)]
+    return(stats::kmeans(x, k, iter.max = kmMax, nstart = kmNStart)$cluster)
 }
 
 #' Get processed consensus matrix.

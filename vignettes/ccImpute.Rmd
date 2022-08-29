@@ -10,7 +10,6 @@ vignette: >
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 bibliography: references.bib  
-
 ---
 
 ```{r, include = FALSE}
@@ -72,14 +71,12 @@ prior to running the imputation. ccImpute only imputes the most probable
 dropout events and is unlikely to benefit from presence of scarcely expressed
 genes nor make any corrections to their expression.
 
-
 ## Adjusted Rand Index (ARI)
 Adjusted Rand Index is a measure of the similarity between two data clusterings
 that is adjusted for the chance grouping of elements. This measure allows to
 evaluate performance of clustering algorithm as a similarity to the optimal 
 clustering assignments derrived from cell labels.
 
- 
 ## Compute Adjusted Rand Index (ARI) without imputation.
 ```{r}
 # Set seed for reproducibility purposes.
