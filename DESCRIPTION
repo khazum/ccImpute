@@ -1,8 +1,9 @@
 Package: ccImpute
 Type: Package
 Title: ccImpute: an accurate and scalable consensus clustering based approach to
-	impute dropout events in the single-cell RNA-seq data
-Version: 0.99.11
+	impute dropout events in the single-cell RNA-seq data 
+	(https://doi.org/10.1186/s12859-022-04814-8)
+Version: 0.99.12
 Authors@R: person("Marcin", "Malec",
   email = "mamalec@iu.edu",
   role = c("cre", "aut"),
@@ -17,15 +18,24 @@ Description: Dropout events make the lowly expressed genes indistinguishable
 	the least amount of new noise as measured by clustering performance 
 	characteristics on datasets with known cell identities.
 License: GPL-3
-Imports: Rcpp, parallel, doParallel, foreach, matrixStats, stats, SIMLR
+Imports: Rcpp, matrixStats, stats, SIMLR, BiocParallel
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.1.2
+LazyData: FALSE
+BugReports: https://github.com/khazum/ccImpute/issues
+RoxygenNote: 7.2.1
 biocViews: SingleCell, PrincipalComponent, DimensionReduction, 
 	Clustering, RNASeq, Transcriptomics
 biocType: Software
 Suggests: 
-    knitr, rmarkdown, BiocStyle, sessioninfo, scRNAseq, scater, 
-    SingleCellExperiment, mclust
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    sessioninfo,
+    scRNAseq,
+    scater,
+    SingleCellExperiment,
+    mclust,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

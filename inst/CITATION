@@ -1,0 +1,18 @@
+citHeader("To cite ccImpute in your publications:")
+
+citEntry(entry="article",
+         title = "ccImpute: an accurate and scalable consensus clustering based 
+         algorithm to impute dropout events in the single-cell RNA-seq data",
+         author = personList( as.person("Marcin Malec"),
+                              as.person("Hasan Kurban"),
+                              as.person("Mehmet Dalkilic"),
+         year = 2022,
+         journal = "BMC Informatics",
+         url = "https://doi.org/10.1186/s12859-022-04814-8",
+         textVersion = 
+         paste("Marcin Malec, et al. (2022):", 
+               "ccImpute: an accurate and scalable consensus clustering based 
+               algorithm to impute dropout events in the single-cell RNA-seq 
+               data",
+               "BMC Informatics, ",
+                "URL: https://doi.org/10.1186/s12859-022-04814-8" ) )

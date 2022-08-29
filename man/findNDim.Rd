@@ -34,3 +34,4 @@ loadings to use for clustering.
 Establish what subsets of loadings from PCA distance measure are used for
 for measuring cluster instability
 }
+\keyword{internal}

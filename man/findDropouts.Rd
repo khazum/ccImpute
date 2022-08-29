@@ -21,3 +21,4 @@ Establishes which zero values in \code{x} are dropout events based on
 weighted cell voting with weights derived from processed consensus matrix
 \code{consMtx}.
 }
+\keyword{internal}

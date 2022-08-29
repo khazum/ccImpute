@@ -103,32 +103,33 @@ MatrixXd wrankFastAll(Ref<MatrixXd> x, Ref<VectorXd> w, unsigned int n_cores) {
 //'@return weighted Pearson distance measure matrix. If ranks are used
 //' this measure turns into weighted Spearman distance measure matrix.
 // [[Rcpp::export]]
-Eigen::MatrixXd wCorDist(const Eigen::Map<Eigen::MatrixXd> x, 
+Eigen::MatrixXd wCorDist(const Eigen::Map<Eigen::MatrixXd> x,
                          const Eigen::Map<Eigen::VectorXd> w,
                          const bool useRanks,
                    const unsigned int n_cores){
-    
+
     Eigen::MatrixXd temp = useRanks ? wrankFastAll(x, w, n_cores) : x;
     double sumw = w.sum();
-    
+
     #ifdef _OPENMP
-    #pragma omp parallel for num_threads(n_cores) 
+    #pragma omp parallel for num_threads(n_cores)
     #endif
     for(unsigned int i = 0; i < temp.cols(); ++i){
-        Eigen::ArrayXXd col_arr = temp.col(i).array();
+        Eigen::ArrayXd col_arr = temp.col(i).array();
         temp.col(i) = col_arr - (w.array() * col_arr).sum()/sumw;
     }
-    
+
     Eigen::MatrixXd corrs(temp.cols(),temp.cols());
-    Eigen::ArrayXXd w_arr = w.array();
-    
+    Eigen::ArrayXd w_arr = w.array();
+
     #ifdef _OPENMP
     #pragma omp parallel for num_threads(n_cores) schedule(dynamic)
     #endif
     for(unsigned int i = 0; i < temp.cols(); ++i){
-        Eigen::ArrayXXd t1 = temp.col(i).array();
+        corrs(i,i) = 0;
+        Eigen::ArrayXd t1 = temp.col(i).array();
         for(unsigned int j = i+1; j < temp.cols(); ++j){
-            Eigen::ArrayXXd t2 = temp.col(j).array();
+            Eigen::ArrayXd t2 = temp.col(j).array();
             double n = (w_arr*t1*t2).sum();
             double d = (w_arr*t1.pow(2)).sum() * (w_arr*t2.pow(2)).sum();
             // double d = p1*p2;
@@ -146,7 +147,7 @@ Eigen::MatrixXd wCorDist(const Eigen::Map<Eigen::MatrixXd> x,
 //' @return consensus matrix
 // [[Rcpp::export]]
 Eigen::MatrixXd getConsMtx(const Eigen::Map<Eigen::MatrixXi> dat) {
-    Eigen::MatrixXd res = dat.cols() * 
+    Eigen::MatrixXd res = dat.cols() *
         Eigen::MatrixXd::Identity(dat.rows(), dat.rows());
     unsigned int i, j, k;
     for (unsigned j = 0; j < dat.cols(); ++j) {
@@ -171,14 +172,14 @@ Eigen::MatrixXd getConsMtx(const Eigen::Map<Eigen::MatrixXi> dat) {
 //'@param n_cores number of cores to use for parallel computation.
 //'@return imputed expression matrix
 // [[Rcpp::export]]
-Eigen::MatrixXd solveDrops(const Eigen::Map<Eigen::MatrixXd> cm, 
-                           Eigen::Map<Eigen::MatrixXd> em, 
-                           const Eigen::Map<Eigen::MatrixXi> ids, 
+Eigen::MatrixXd solveDrops(const Eigen::Map<Eigen::MatrixXd> cm,
+                           Eigen::Map<Eigen::MatrixXd> em,
+                           const Eigen::Map<Eigen::MatrixXi> ids,
                            const int n_cores) {
     //map row to columns
     std::unordered_map<unsigned int, std::vector<unsigned int>> col2rows;
     std::vector<unsigned int> keys;
-    
+
     // Map out the rows for each column
     for(unsigned int i=0; i<ids.rows(); ++i){
         // account for the fact that r indices are 1 based
@@ -190,7 +191,7 @@ Eigen::MatrixXd solveDrops(const Eigen::Map<Eigen::MatrixXd> cm,
         // account for the fact that r indices are 1 based
         col2rows[col].push_back(ids(i,0)-1);
     }
-    
+
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(n_cores)
 #endif
@@ -199,11 +200,11 @@ Eigen::MatrixXd solveDrops(const Eigen::Map<Eigen::MatrixXd> cm,
         std::vector<unsigned int> rows_indices = col2rows[ci];
         unsigned int row_count = rows_indices.size();
         if(row_count == 1){
-            em(rows_indices[0],ci) =cm.row(rows_indices[0]).dot(em.col(ci));
+            em(rows_indices[0],ci) = cm.row(rows_indices[0]).dot(em.col(ci));
         }
         else{
             Eigen::MatrixXd A(row_count, row_count);
-            
+
             for(unsigned int j=0; j < row_count; ++j){
                 for(unsigned int k=0; k < row_count; ++k){
                     A(j,k) = j==k ? 1:-cm(rows_indices[j], rows_indices[k]);

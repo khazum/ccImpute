@@ -21,3 +21,4 @@ This function gets consensus matrix based on the clustering solutions
 contained in the \code{kmResults} input parameter and does the processing to
 use it for imputation.
 }
+\keyword{internal}
