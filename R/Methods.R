@@ -53,7 +53,7 @@
 #' @export
 #' @examples
 #' exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
-#' ccImpute(exp_matrix, k = 2, nCores = 2)
+#' ccImpute(exp_matrix, k = 2)
 ccImpute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
                         kmNStart, kmMax=1000) {
     logX <- as.matrix(logX) 
