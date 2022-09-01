@@ -198,7 +198,7 @@ findNDim <- function(n, distPCA, pcaMin, pcaMax){
         eigs <- distPCA$sdev^2
         prop <- eigs/sum(eigs)
         n <- length(prop)
-        iVal <- n-findInterval(c(pcaMin, pcaMax), prop[n:1])
+        iVal <- n-findInterval(c(pcaMin, pcaMax), prop[n:1])+1
         nDim <- seq(iVal[2], iVal[1], ceiling((iVal[1]-iVal[2])/14))
     }
     return(nDim)
