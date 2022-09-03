@@ -30,13 +30,10 @@
 #' @param consMin the low-pass filter threshold for processing consensus
 #' matrix. This is to eliminate noise from unlikely clustering assignmnets.
 #' It is recommended to keep this value >-.5.
-#' @param nCores the number of cores to be used on the user's machine.
-#' If not set, \code{ccImpute} will use all but one cores of your machine.
 #' @param kmNStart nstart parameter passed to \code{\link[stats]{kmeans}}.
 #' function. Can be set manually. By default it is \code{1000} for up to
 #' \code{2000} cells and \code{50} for more than \code{2000} cells.
 #' @param kmMax iter.max parameter passed to \code{\link[stats]{kmeans}}.
-#' @param rand_seed sets the seed of the random number generator.
 #' \code{ccImpute} is a stochastic method, and setting the \code{rand_seed}
 #' allows reproducibility.
 #'

@@ -56,12 +56,7 @@ It is recommended to keep this value >-.5.}
 function. Can be set manually. By default it is \code{1000} for up to
 \code{2000} cells and \code{50} for more than \code{2000} cells.}
 
-\item{kmMax}{iter.max parameter passed to \code{\link[stats]{kmeans}}.}
-
-\item{nCores}{the number of cores to be used on the user's machine.
-If not set, \code{ccImpute} will use all but one cores of your machine.}
-
-\item{rand_seed}{sets the seed of the random number generator.
+\item{kmMax}{iter.max parameter passed to \code{\link[stats]{kmeans}}.
 \code{ccImpute} is a stochastic method, and setting the \code{rand_seed}
 allows reproducibility.}
 }
@@ -77,5 +72,5 @@ RNA-seq data DOI: https://doi.org/10.1186/s12859-022-04814-8
 }
 \examples{
 exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
-ccImpute(exp_matrix, k = 2, nCores = 2)
+ccImpute(exp_matrix, k = 2)
 }
