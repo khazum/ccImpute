@@ -1,11 +1,14 @@
 test_that("Testing getPConsMtx function", {
-    expect_equal(getPConsMtx(c(c(1,2,3,4)), .5), diag(4))
-    expect_equal(getPConsMtx(c(c(1,2,3,4), (c(1,2,3,4)), .5), diag(4))
+    input1 <-list(c(1L,1L))
+    output <- matrix(c(0,1,1,0), nrow = 2, ncol = 2)
+    expect_equal(getPConsMtx(input1, .5), output1)
+    
+    input2 <-list(c(1L,1L), c(1L,1L))
+    expect_equal(getPConsMtx(input2, .5), output2)
 })
 test_that("Testing findNDim function", {
     expect_equal(findNDim(100, NULL, NULL, NULL), seq(4,7))
     expect_equal(findNDim(100, NULL, 0.01, 0.02), seq(1,2))
-    expect_equal(findNDim(500, prcomp(diag(500)), rep(1,2))
 })
 test_that("Testing findDropouts function", {
     expect_equal(findDropouts(matrix(1, 4, 4) - diag(4), matrix(1, 4, 4)), diag(4)==TRUE)

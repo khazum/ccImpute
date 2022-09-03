@@ -190,8 +190,8 @@ findNDim <- function(n, distPCA, pcaMin, pcaMax){
     }
 
     if(isCellCountLow){
-        lv <- floor(pcaMin * n)
-        rv <- ceiling(pcaMax * n)
+        lv <- round(pcaMin * n)
+        rv <- round(pcaMax * n)
         nDim <- seq(from=lv,to=rv, by=ceiling((rv-lv)/14))
     }
     else{
