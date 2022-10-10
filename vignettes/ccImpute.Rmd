@@ -20,9 +20,9 @@ knitr::opts_chunk$set(
 ```
 # Introduction
 Dropout events make the lowly expressed genes indistinguishable from true zero 
-expression and different than the low expression present in cells of the same
-type. This issue makes any subsequent downstream analysis difficult. 
-ccImpute[@malec2022ccimpute] isan imputation tool that uses cell similarity 
+expression and different from the low expression in cells of the same type. This 
+issue makes any subsequent downstream analysis difficult. 
+ccImpute[@malec2022ccimpute] is an imputation tool that uses cell similarity 
 established by consensus clustering to impute the most probable dropout events
 in the scRNA-seq datasets. ccImpute demonstrates performance which exceeds the 
 performance of existing imputation approaches while introducing the least amount
@@ -39,10 +39,10 @@ BiocManager::install("ccImpute")
 ```
 
 # Data Pre-processing
-`ccImpute` is an imputation tool and it does not provide functions for the
-pre-processing the data. This tool expects the user to preprocess the data
-prior to using it. The input data is expected to be in log-normalized format.
-This manual includes sample minimal pre-processing of dataset from
+`ccImpute` is an imputation tool that does not provide functions for 
+pre-processing the data. This tool expects the user to pre-process the data 
+before using it. The input data is expected to be in a log-normalized format. 
+This manual includes sample minimal pre-processing of a dataset from
 [scRNAseq database](http://bioconductor.org/packages/scRNAseq) using the
 [scater tool](http://bioconductor.org/packages/scater).
 
@@ -65,17 +65,17 @@ sce <- DarmanisBrainData()
 sce <- logNormCounts(sce)
 ```
 ## Pre-processing data.
-A user may consider performing [feature selection]
-(https://bioconductor.org/books/3.15/OSCA.basic/feature-selection.html)
+A user may consider performing [feature selection](https://bioconductor.org/books/3.15/OSCA.basic/feature-selection.html)
 prior to running the imputation. ccImpute only imputes the most probable 
-dropout events and is unlikely to benefit from presence of scarcely expressed
-genes nor make any corrections to their expression.
+dropout events and is unlikely to benefit from the presence of scarcely 
+expressed genes nor make any correctio ns to their expression.
 
 ## Adjusted Rand Index (ARI)
-Adjusted Rand Index is a measure of the similarity between two data clusterings
-that is adjusted for the chance grouping of elements. This measure allows to
-evaluate performance of clustering algorithm as a similarity to the optimal 
-clustering assignments derrived from cell labels.
+Adjusted Rand Index is a measure of the similarity between two data clusterings 
+adjusted for the chance grouping of elements. This measure allows us to evaluate 
+the performance of the clustering algorithm as a similarity to the optimal 
+clustering assignments derived from cell labels.
+
 
 ## Compute Adjusted Rand Index (ARI) without imputation.
 ```{r}
@@ -97,9 +97,9 @@ adjustedRandIndex(assgmts, colData(sce)$cell.type)
 ```
 ## Perform the imputation and update the logcounts assay.
 ```{r}
-assay(sce, "imputed") <- ccImpute(assays(sce)$logcounts, k = k)
+assay(sce, "imputed") <- ccImpute(logcounts(sce), k = k)
 ```
-## Recompute Adjusted Rand Index (ARI) with imputation.
+## Re-compute Adjusted Rand Index (ARI) with imputation.
 ```{r}
 # Recompute PCA reduction of the dataset
 reducedDim(sce, "PCA_imputed") <- prcomp(t(assay(sce, "imputed")))$x
@@ -119,3 +119,5 @@ library("sessioninfo")
 options(width = 120)
 session_info()
 ```
+
+# References

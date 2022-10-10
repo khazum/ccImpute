@@ -52,12 +52,12 @@
 #' exp_matrix <- log(abs(matrix(rnorm(1000000),nrow=10000))+1)
 #' ccImpute(exp_matrix, k = 2)
 ccImpute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
-                        kmNStart, kmMax=1000) {
+                        kmNStart, kmMax=1000, BPPARAM=bpparam()) {
     logX <- as.matrix(logX) 
     n <- ncol(logX) #number of samples
     message(c("Running ccImpute on dataset with ", n, " cells."))
 
-    nCores <- bpnworkers(bpparam())
+    nCores <- bpnworkers(BPPARAM)
 
     if(missing(k)){
         k <- SIMLR::SIMLR_Estimate_Number_of_Clusters(logX, NUMC = 2:12)
@@ -79,7 +79,8 @@ ccImpute <- function(logX, useRanks=TRUE, pcaMin, pcaMax, k, consMin=0.65,
     # Address missing kmNStart parameter
     if(missing(kmNStart)){kmNStart <- ifelse(n > 2000, 50, 1000)}
 
-    kmResults <- bplapply(nDim, kmAux, distPCA$rotation[], k, kmNStart, kmMax)
+    kmResults <- bplapply(nDim, kmAux, distPCA$rotation[], k, kmNStart, 
+                            kmMax, BPPARAM = BPPARAM)
     rm(distPCA) # Conserve space
 
     consMtx <- getPConsMtx(kmResults, consMin)
