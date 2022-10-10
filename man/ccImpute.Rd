@@ -15,7 +15,8 @@ ccImpute(
     k,
     consMin = 0.65,
     kmNStart,
-    kmMax = 1000
+    kmMax = 1000,
+    BPPARAM = bpparam()
 )
 }
 \arguments{
