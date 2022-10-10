@@ -60,6 +60,8 @@ function. Can be set manually. By default it is \code{1000} for up to
 \item{kmMax}{iter.max parameter passed to \code{\link[stats]{kmeans}}.
 \code{ccImpute} is a stochastic method, and setting the \code{rand_seed}
 allows reproducibility.}
+
+\item{BPPARAM}{- BiocParallel parameters for parallelization}
 }
 \value{
 A normalized and log transformed scRNA-seq expression matrix with

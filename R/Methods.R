@@ -36,7 +36,7 @@
 #' @param kmMax iter.max parameter passed to \code{\link[stats]{kmeans}}.
 #' \code{ccImpute} is a stochastic method, and setting the \code{rand_seed}
 #' allows reproducibility.
-#'
+#' @param BPPARAM - BiocParallel parameters for parallelization
 #' @return A normalized and log transformed scRNA-seq expression matrix with
 #' imputed missing values.
 #'
